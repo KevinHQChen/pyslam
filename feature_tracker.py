@@ -217,8 +217,8 @@ class DescriptorFeatureTracker(FeatureTracker):
 
 
     # out: FeatureTrackingResult()
-    def track(self, image_ref, image_cur, kps_ref, des_ref):
-        kps_cur, des_cur = self.detectAndCompute(image_cur)
+    def track(self, image_ref, image_cur, kps_ref, des_ref, id):
+        kps_cur, des_cur = self.detectAndCompute(image_cur, id)
         # convert from list of keypoints to an array of points 
         kps_cur = np.array([x.pt for x in kps_cur], dtype=np.float32) 
     

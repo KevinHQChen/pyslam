@@ -508,7 +508,7 @@ class Tracking(object):
 
         # build current frame 
         self.timer_frame.start()        
-        f_cur = Frame(img, self.camera, timestamp=timestamp) 
+        f_cur = Frame(img, self.camera, id=frame_id, timestamp=timestamp) 
         self.f_cur = f_cur 
         print("frame: ", f_cur.id)        
         self.timer_frame.refresh()   

@@ -275,7 +275,7 @@ class Frame(FrameBase):
             else: 
                 self.img = None                    
             if kps_data is None:   
-                self.kps, self.des = Frame.tracker.detectAndCompute(img)                                                         
+                self.kps, self.des = Frame.tracker.detectAndCompute(img, id)                                                         
                 # convert from a list of keypoints to arrays of points, octaves, sizes  
                 kps_data = np.array([ [x.pt[0], x.pt[1], x.octave, x.size, x.angle] for x in self.kps ], dtype=np.float32)                            
                 self.kps     = kps_data[:,:2]    

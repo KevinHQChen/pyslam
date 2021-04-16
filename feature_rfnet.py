@@ -255,43 +255,43 @@ class RfNetFeature2D:
             tf.reset_default_graph()           
     
     
-    def compute_kps_des(self,photo):     
+    def compute_kps_des(self,photo,id):     
         with self.lock:        
             height, width = photo.shape[:2]
             longer_edge = max(height, width)
-            if self.lfnet_config.max_longer_edge > 0 and longer_edge > self.lfnet_config.max_longer_edge:
-                if height > width:
-                    new_height = self.lfnet_config.max_longer_edge
-                    new_width = int(width * self.lfnet_config.max_longer_edge / height)
-                else:
-                    new_height = int(height * self.lfnet_config.max_longer_edge / width)
-                    new_width = self.lfnet_config.max_longer_edge
-                photo = cv2.resize(photo, (new_width, new_height))
-                height, width = photo.shape[:2]
-            rgb = photo.copy()
-            if photo.ndim == 3 and photo.shape[-1] == 3:
-                photo = cv2.cvtColor(photo, cv2.COLOR_RGB2GRAY)
+#            if self.lfnet_config.max_longer_edge > 0 and longer_edge > self.lfnet_config.max_longer_edge:
+#                if height > width:
+#                    new_height = self.lfnet_config.max_longer_edge
+#                    new_width = int(width * self.lfnet_config.max_longer_edge / height)
+#                else:
+#                    new_height = int(height * self.lfnet_config.max_longer_edge / width)
+#                    new_width = self.lfnet_config.max_longer_edge
+#                photo = cv2.resize(photo, (new_width, new_height))
+#                height, width = photo.shape[:2]
+#            rgb = photo.copy()
+#            if photo.ndim == 3 and photo.shape[-1] == 3:
+#                photo = cv2.cvtColor(photo, cv2.COLOR_RGB2GRAY)
             photo = photo[None,...,None].astype(np.float32) / 255.0 # normalize 0-1
             assert photo.ndim == 4 # [1,H,W,1]
 
-            feed_dict = {self.photo_ph: photo,}
+#            feed_dict = {self.photo_ph: photo,}
             #if self.lfnet_config.full_output:
-            fetch_dict = {
-                'kpts': self.ops['kpts'],
-                'feats': self.ops['feats'],
-                'kpts_scale': self.ops['kpts_scale'],
-                'kpts_ori': self.ops['kpts_ori'],
-                'scale_maps': self.ops['scale_maps'],
-                'degree_maps': self.ops['degree_maps'],
-                'heatmaps': self.ops['heatmaps'],                    
-            }
-            outs = self.session.run(fetch_dict, feed_dict=feed_dict)
+#            fetch_dict = {
+#                'kpts': self.ops['kpts'],
+#                'feats': self.ops['feats'],
+#                'kpts_scale': self.ops['kpts_scale'],
+#                'kpts_ori': self.ops['kpts_ori'],
+#                'scale_maps': self.ops['scale_maps'],
+#                'degree_maps': self.ops['degree_maps'],
+#                'heatmaps': self.ops['heatmaps'],                    
+#            }
+#            outs = self.session.run(fetch_dict, feed_dict=feed_dict)
                 
-            self.pts = outs['kpts']
-            scales = outs['kpts_scale']     
-            scale_maps = outs['scale_maps'].reshape(height, width)                           
-            orientations = outs['kpts_ori'] 
-            heatmaps = outs['heatmaps'].reshape(height, width)    
+#            self.pts = outs['kpts']
+#            scales = outs['kpts_scale']     
+#            scale_maps = outs['scale_maps'].reshape(height, width)                           
+#            orientations = outs['kpts_ori'] 
+#            heatmaps = outs['heatmaps'].reshape(height, width)    
                                     
             # kp_img = draw_keypoints(rgb, outs['kpts']) # draw keypoints
             # scale_range = self.lfnet_config.net_max_scale-self.lfnet_config.net_min_scale
@@ -303,9 +303,20 @@ class RfNetFeature2D:
             if False: 
                 # print and draw debug stuff 
                 self.debug(self.pts,scales,orientations,scale_maps,heatmaps)  
-  
-            self.kps = convert_to_keypoints(self.pts, scales*self.keypoint_size, np.degrees(orientations), heatmaps)     
-            self.des = outs['feats']                           
+
+#            self.kps = convert_to_keypoints(self.pts, scales*self.keypoint_size, np.degrees(orientations), heatmaps)     
+#            self.des = outs['feats']                           
+
+            def to_cv2_kp(kp):
+                # kp is like [batch_idx, y, x, channel]
+                return cv2.KeyPoint(float(kp[2]), float(kp[1]), 0) 
+
+            print("image: " + str(id))
+            kp, des = pickle.load( open( "dest/"+str(id)+".txt", "rb" ) )
+            mkp = kp.cpu().numpy()
+            self.kp = list(map(to_cv2_kp, mkp))
+            self.des = des.cpu().detach().numpy()
+
             return self.kps, self.des 
         
         
@@ -323,12 +334,12 @@ class RfNetFeature2D:
         cv2.waitKey(1)        
     
     
-    def detectAndCompute(self, frame, mask=None):  #mask is a fake input  
+    def detectAndCompute(self, frame, id, mask=None):  #mask is a fake input  
         with self.lock:
             self.frame = frame         
-            self.kps, self.des = self.compute_kps_des(frame)            
+            self.kps, self.des = self.compute_kps_des(frame, id)            
             if kVerbose:
-                print('detector: LFNET , descriptor: LFNET , #features: ', len(self.kps), ', frame res: ', frame.shape[0:2])                  
+                print('detector: RFNET , descriptor: RFNET , #features: ', len(self.kps), ', frame res: ', frame.shape[0:2])                  
             return self.kps, self.des
     
            
