@@ -292,6 +292,12 @@ class LfNetFeature2D:
             scale_maps = outs['scale_maps'].reshape(height, width)                           
             orientations = outs['kpts_ori'] 
             heatmaps = outs['heatmaps'].reshape(height, width)    
+            
+            print(self.pts.shape)
+            print(scales.shape)
+            print(scale_maps.shape)
+            print(orientations.shape)
+            print(heatmaps.shape)
                                     
             # kp_img = draw_keypoints(rgb, outs['kpts']) # draw keypoints
             # scale_range = self.lfnet_config.net_max_scale-self.lfnet_config.net_min_scale
