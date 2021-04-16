@@ -152,7 +152,7 @@ class VisualOdometry(object):
     def processFrame(self, frame_id):
         # track features 
         self.timer_feat.start()
-        self.track_result = self.feature_tracker.track(self.prev_image, self.cur_image, self.kps_ref, self.des_ref)
+        self.track_result = self.feature_tracker.track(self.prev_image, self.cur_image, self.kps_ref, self.des_ref, id=frame_id)
         self.timer_feat.refresh()
         # estimate pose 
         self.timer_pose_est.start()
