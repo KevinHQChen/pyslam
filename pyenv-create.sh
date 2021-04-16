@@ -23,6 +23,10 @@ ENV_PATH=$ENVS_PATH/$ENV_NAME        # path of the virtual environment we are cr
 install_package python3-venv
 . install_pyenv.sh 
 
+pyenv install -v 3.6.9
+pyenv install 3.6-dev
+
+
 # create folder for virutal environment and get into it 
 make_dir $ENV_PATH
 cd $ENVS_PATH

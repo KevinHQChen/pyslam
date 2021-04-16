@@ -71,7 +71,7 @@ if [ $INSTALL_PANGOLIN_ORIGINAL -eq 1 ] ; then
     make_dir build 
     if [ ! -f build/src/libpangolin.so ]; then
         cd build
-        cmake ../ -DAVFORMAT_INCLUDE_DIR="" -DCPP11_NO_BOOST=ON $EXTERNAL_OPTION
+        cmake -DPYBIND11_PYTHON_VERSION=3.6 ../ -DAVFORMAT_INCLUDE_DIR="" -DCPP11_NO_BOOST=ON $EXTERNAL_OPTION
         make -j8
         cd build/src
         ln -s pypangolin.*-linux-gnu.so  pangolin.linux-gnu.so
@@ -97,7 +97,7 @@ else
     if [ ! -f pangolin.cpython-*.so ]; then   
         make_dir build   
         cd build
-        cmake .. -DBUILD_PANGOLIN_LIBREALSENSE=OFF $EXTERNAL_OPTION # disable realsense 
+        cmake -DPYBIND11_PYTHON_VERSION=3.6 .. -DBUILD_PANGOLIN_LIBREALSENSE=OFF $EXTERNAL_OPTION # disable realsense 
         make -j8
         cd ..
         #python setup.py install
@@ -129,7 +129,7 @@ cd g2opy
 if [ ! -f lib/g2o.cpython-*.so ]; then  
     make_buid_dir
     cd build
-    cmake .. $EXTERNAL_OPTION
+    cmake -DPYBIND11_PYTHON_VERSION=3.6 .. $EXTERNAL_OPTION
     make -j8
     cd ..
     #python3 setup.py install --user

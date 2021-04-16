@@ -60,7 +60,7 @@ cd lfnet
 touch __init__.py 
 make_dir pretrained 
 if [ ! -d pretrained/lfnet-norotaug ]; then 
-    wget https://gfx.uvic.ca/pubs/2018/ono2018lfnet/lfnet-norotaug.tar.gz -O pretrained/lfnet-norotaug.tar.gz
+    wget https://www.cs.ubc.ca/research/kmyi_data/files/2018/lf-net/lfnet-norotaug.tar.gz -O pretrained/lfnet-norotaug.tar.gz
     tar -C pretrained/ -xf pretrained/lfnet-norotaug.tar.gz
 fi 
 cd $STARTING_DIR

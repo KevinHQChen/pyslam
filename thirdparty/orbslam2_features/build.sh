@@ -16,7 +16,7 @@ fi
 
 make_dir build
 cd build
-cmake .. $EXTERNAL_OPTION
+cmake -DPYBIND11_PYTHON_VERSION=3.6 .. $EXTERNAL_OPTION
 make -j 4
 
 cd ..
