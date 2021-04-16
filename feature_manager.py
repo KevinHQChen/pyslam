@@ -931,7 +931,7 @@ class FeatureManager(object):
 
     # detect keypoints and their descriptors
     # out: kps, des 
-    def detectAndCompute(self, frame, mask=None, filter = True):
+    def detectAndCompute(self, frame, img_id, mask=None, filter = True):
         if not self.need_color_image and frame.ndim>2:     # check if we have to convert to gray image 
             frame = cv2.cvtColor(frame,cv2.COLOR_RGB2GRAY)  
         if self.use_pyramid_adaptor:  
@@ -956,7 +956,7 @@ class FeatureManager(object):
             # standard detectAndCompute  
             if self.is_detector_equal_to_descriptor:                     
                 # detector = descriptor => call them together with detectAndCompute() method    
-                kps, des = self._feature_detector.detectAndCompute(frame, mask)   
+                kps, des = self._feature_detector.detectAndCompute(frame, img_id, mask=mask)   
                 if kVerbose:
                     print('detector:', self.detector_type.name,', #features:',len(kps))           
                     print('descriptor:', self.descriptor_type.name,', #features:',len(kps))                      

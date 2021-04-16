@@ -255,7 +255,7 @@ class RfNetFeature2D:
             tf.reset_default_graph()           
     
     
-    def compute_kps_des(self,photo,id):     
+    def compute_kps_des(self,photo,img_id):     
         with self.lock:        
             height, width = photo.shape[:2]
             longer_edge = max(height, width)
@@ -311,8 +311,8 @@ class RfNetFeature2D:
                 # kp is like [batch_idx, y, x, channel]
                 return cv2.KeyPoint(float(kp[2]), float(kp[1]), 0) 
 
-            print("image: " + str(id))
-            kp, des = pickle.load( open( "dest/"+str(id)+".txt", "rb" ) )
+            print("image: ", img_id)
+            kp, des = pickle.load( open( "dest/"+str(img_id)+".txt", "rb" ) )
             mkp = kp.cpu().numpy()
             self.kp = list(map(to_cv2_kp, mkp))
             self.des = des.cpu().detach().numpy()
@@ -334,10 +334,10 @@ class RfNetFeature2D:
         cv2.waitKey(1)        
     
     
-    def detectAndCompute(self, frame, id, mask=None):  #mask is a fake input  
+    def detectAndCompute(self, frame, img_id, mask=None):  #mask is a fake input  
         with self.lock:
             self.frame = frame         
-            self.kps, self.des = self.compute_kps_des(frame, id)            
+            self.kps, self.des = self.compute_kps_des(frame, img_id)            
             if kVerbose:
                 print('detector: RFNET , descriptor: RFNET , #features: ', len(self.kps), ', frame res: ', frame.shape[0:2])                  
             return self.kps, self.des

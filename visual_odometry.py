@@ -142,9 +142,9 @@ class VisualOdometry(object):
         _, R, t, mask = cv2.recoverPose(E, self.kpn_cur, self.kpn_ref, focal=1, pp=(0., 0.))   
         return R,t  # Rrc, trc (with respect to 'ref' frame) 		
 
-    def processFirstFrame(self):
+    def processFirstFrame(self, frame_id=0):
         # only detect on the current image 
-        self.kps_ref, self.des_ref = self.feature_tracker.detectAndCompute(self.cur_image)
+        self.kps_ref, self.des_ref = self.feature_tracker.detectAndCompute(self.cur_image, frame_id)
         # convert from list of keypoints to an array of points 
         self.kps_ref = np.array([x.pt for x in self.kps_ref], dtype=np.float32) 
         self.draw_img = self.drawFeatureTracks(self.cur_image)
@@ -152,7 +152,7 @@ class VisualOdometry(object):
     def processFrame(self, frame_id):
         # track features 
         self.timer_feat.start()
-        self.track_result = self.feature_tracker.track(self.prev_image, self.cur_image, self.kps_ref, self.des_ref, id=frame_id)
+        self.track_result = self.feature_tracker.track(self.prev_image, self.cur_image, self.kps_ref, self.des_ref, frame_id)
         self.timer_feat.refresh()
         # estimate pose 
         self.timer_pose_est.start()

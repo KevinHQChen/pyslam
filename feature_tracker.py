@@ -212,13 +212,13 @@ class DescriptorFeatureTracker(FeatureTracker):
 
 
     # out: keypoints and descriptors 
-    def detectAndCompute(self, frame, mask=None):
-        return self.feature_manager.detectAndCompute(frame, mask) 
+    def detectAndCompute(self, frame, img_id, mask=None):
+        return self.feature_manager.detectAndCompute(frame, img_id, mask) 
 
 
     # out: FeatureTrackingResult()
-    def track(self, image_ref, image_cur, kps_ref, des_ref, id):
-        kps_cur, des_cur = self.detectAndCompute(image_cur, id)
+    def track(self, image_ref, image_cur, kps_ref, des_ref, img_id):
+        kps_cur, des_cur = self.detectAndCompute(image_cur, img_id)
         # convert from list of keypoints to an array of points 
         kps_cur = np.array([x.pt for x in kps_cur], dtype=np.float32) 
     
