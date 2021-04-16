@@ -59,6 +59,7 @@ class FeatureDetectorTypes(Enum):
     R2D2        = 22  # [end-to-end] joint detector-descriptor - "R2D2: Repeatable and Reliable Detector and Descriptor"   
     KEYNET      = 23  # "Key.Net: Keypoint Detection by Handcrafted and Learned CNN Filters"
     DISK        = 24  # [end-to-end] joint detector-descriptor - "DISK: Learning local features with policy gradient"
+    RFNET       = 25  # extending LFNET
 
 class FeatureDescriptorTypes(Enum):
     NONE        = 0   # used for LK tracker (in main_vo.py)
@@ -90,7 +91,8 @@ class FeatureDescriptorTypes(Enum):
     R2D2        = 26  # [end-to-end] joint detector-descriptor (only with R2D2 detector) - "R2D2: Repeatable and Reliable Detector and Descriptor" 
     KEYNET      = 27  # keynet descriptor is HARDNET (only with KEYNET detector) - "Key.Net: Keypoint Detection by Handcrafted and Learned CNN Filters"   
     BEBLID      = 28  # [binary] only descriptor - " BEBLID: Boosted Efficient Binary Local Image Descriptor"              
-    DISK        = 29  # [end-to-end] joint detector-descriptor - "DISK: Learning local features with policy gradient"    
+    DISK        = 29  # [end-to-end] joint detector-descriptor - "DISK: Learning local features with policy gradient"
+    RFNET       = 30  # extending LFNET
     
 class FeatureInfo(object): 
     norm_type = dict() 
@@ -176,6 +178,9 @@ class FeatureInfo(object):
     #
     norm_type[FeatureDescriptorTypes.LFNET] = cv2.NORM_L2   
     max_descriptor_distance[FeatureDescriptorTypes.LFNET] = 2.2         # LFNET               
+    #
+    norm_type[FeatureDescriptorTypes.RFNET] = cv2.NORM_L2   
+    max_descriptor_distance[FeatureDescriptorTypes.RFNET] = 2.2         # LFNET               
     #
     norm_type[FeatureDescriptorTypes.R2D2] = cv2.NORM_L2   
     max_descriptor_distance[FeatureDescriptorTypes.R2D2] = 1.4          # R2D2       

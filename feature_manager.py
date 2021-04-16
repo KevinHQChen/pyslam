@@ -53,6 +53,7 @@ D2NetFeature2D = import_from('feature_d2net', 'D2NetFeature2D')
 DelfFeature2D = import_from('feature_delf', 'DelfFeature2D')
 ContextDescFeature2D = import_from('feature_contextdesc', 'ContextDescFeature2D')
 LfNetFeature2D = import_from('feature_lfnet', 'LfNetFeature2D')
+RfNetFeature2D = import_from('feature_rfnet', 'RfNetFeature2D')
 R2d2Feature2D = import_from('feature_r2d2', 'R2d2Feature2D')
 KeyNetDescFeature2D = import_from('feature_keynet', 'KeyNetDescFeature2D')
 DiskFeature2D = import_from('feature_disk', 'DiskFeature2D')
@@ -454,7 +455,14 @@ class FeatureManager(object):
             self._feature_detector = LfNetFeature2D(num_features=self.num_features)
             #self.keypoint_filter_type = KeyPointFilterTypes.NONE
             #    
-            #   
+            #
+        elif self.detector_type == FeatureDetectorTypes.RFNET:
+            self.need_color_image = True
+            #self.num_levels = 1 # force
+            self._feature_detector = RfNetFeature2D(num_features=self.num_features)
+            #self.keypoint_filter_type = KeyPointFilterTypes.NONE
+            #
+            #
         elif self.detector_type == FeatureDetectorTypes.R2D2:  
             self.need_color_image = True        
             #self.num_levels = - # internally recomputed               
@@ -641,6 +649,11 @@ class FeatureManager(object):
                 if self.detector_type != FeatureDetectorTypes.LFNET: 
                     raise ValueError("You cannot use LFNET descriptor without LFNET detector!\nPlease, select LFNET as both descriptor and detector!")
                 self._feature_descriptor = self._feature_detector  # reuse detector object                                     
+                #
+                #
+            elif self.descriptor_type == FeatureDescriptorTypes.RFNET:
+                #CHANGE: add relevant parameters
+                self._feature_descriptor = self._feature_detector  # reuse detector object
                 #
                 #    
             elif self.descriptor_type == FeatureDescriptorTypes.R2D2:   

@@ -20,7 +20,7 @@
 
 
 import config
-config.cfg.set_lib('lfnet',prepend=True) 
+config.cfg.set_lib('lfnet',prepend=True)
   
 import os
 import sys
@@ -186,55 +186,55 @@ def convert_to_keypoints(kpts, scales, orientations, heatmaps):
     
 
 # interface for pySLAM
-class LfNetFeature2D: 
+class RfNetFeature2D: 
     def __init__(self,
                  num_features=2000, 
                  do_tf_logging=False):  
-        print('Using LfNetFeature2D')   
+        print('Using RfNetFeature2D')   
         self.lock = RLock()
+#        
+#        self.model_base_path = kLfNetBasePath
+#        self.model_path = kLfNetModelPath
         
-        self.model_base_path = kLfNetBasePath
-        self.model_path = kLfNetModelPath
+#        self.lfnet_config = build_lfnet_config()
+#        print_options(self.lfnet_config,'LFNET CONFIG')
         
-        self.lfnet_config = build_lfnet_config()
-        print_options(self.lfnet_config,'LFNET CONFIG')
-        
-        self.num_features=num_features
-        self.lfnet_config.top_k = self.num_features
+#        self.num_features=num_features
+#        self.lfnet_config.top_k = self.num_features
 
-        set_tf_logging(do_tf_logging)
+#        set_tf_logging(do_tf_logging)
         
         print('==> Loading pre-trained network.')
         # Build Networks
-        tf.reset_default_graph()
-
-        self.photo_ph = tf.placeholder(tf.float32, [1, None, None, 1]) # input grayscale image, normalized by 0~1
-        is_training = tf.constant(False) # Always False in testing
-
-        self.ops = build_networks(self.lfnet_config, self.photo_ph, is_training)
-
-        tf_config = tf.ConfigProto()
-        tf_config.gpu_options.allow_growth = True 
-        self.session = tf.Session(config=tf_config)
-        self.session.run(tf.global_variables_initializer())
+#        tf.reset_default_graph()
+#
+#        self.photo_ph = tf.placeholder(tf.float32, [1, None, None, 1]) # input grayscale image, normalized by 0~1
+#        is_training = tf.constant(False) # Always False in testing
+#
+#        self.ops = build_networks(self.lfnet_config, self.photo_ph, is_training)
+#
+#        tf_config = tf.ConfigProto()
+#        tf_config.gpu_options.allow_growth = True 
+#        self.session = tf.Session(config=tf_config)
+#        self.session.run(tf.global_variables_initializer())
 
         # load model
-        saver = tf.train.Saver()
+#        saver = tf.train.Saver()
         print('Load trained models...')
 
-        if os.path.isdir(self.lfnet_config.model):
-            checkpoint = tf.train.latest_checkpoint(self.lfnet_config.model)
-            model_dir = self.lfnet_config.model
-        else:
-            checkpoint = self.lfnet_config.model
-            model_dir = os.path.dirname(self.lfnet_config.model)
-
-        if checkpoint is not None:
-            print('Checkpoint', os.path.basename(checkpoint))
-            print("[{}] Resuming...".format(time.asctime()))
-            saver.restore(self.session, checkpoint)
-        else:
-            raise ValueError('Cannot load model from {}'.format(model_dir))    
+#        if os.path.isdir(self.lfnet_config.model):
+#            checkpoint = tf.train.latest_checkpoint(self.lfnet_config.model)
+#            model_dir = self.lfnet_config.model
+#        else:
+#            checkpoint = self.lfnet_config.model
+#            model_dir = os.path.dirname(self.lfnet_config.model)
+#
+#        if checkpoint is not None:
+#            print('Checkpoint', os.path.basename(checkpoint))
+#            print("[{}] Resuming...".format(time.asctime()))
+#            saver.restore(self.session, checkpoint)
+#        else:
+#            raise ValueError('Cannot load model from {}'.format(model_dir))    
         print('==> Successfully loaded pre-trained network.')
                 
         self.pts = []
@@ -259,22 +259,22 @@ class LfNetFeature2D:
         with self.lock:        
             height, width = photo.shape[:2]
             longer_edge = max(height, width)
-#            if self.lfnet_config.max_longer_edge > 0 and longer_edge > self.lfnet_config.max_longer_edge:
-#                if height > width:
-#                    new_height = self.lfnet_config.max_longer_edge
-#                    new_width = int(width * self.lfnet_config.max_longer_edge / height)
-#                else:
-#                    new_height = int(height * self.lfnet_config.max_longer_edge / width)
-#                    new_width = self.lfnet_config.max_longer_edge
-#                photo = cv2.resize(photo, (new_width, new_height))
-#                height, width = photo.shape[:2]
+            if self.lfnet_config.max_longer_edge > 0 and longer_edge > self.lfnet_config.max_longer_edge:
+                if height > width:
+                    new_height = self.lfnet_config.max_longer_edge
+                    new_width = int(width * self.lfnet_config.max_longer_edge / height)
+                else:
+                    new_height = int(height * self.lfnet_config.max_longer_edge / width)
+                    new_width = self.lfnet_config.max_longer_edge
+                photo = cv2.resize(photo, (new_width, new_height))
+                height, width = photo.shape[:2]
             rgb = photo.copy()
             if photo.ndim == 3 and photo.shape[-1] == 3:
                 photo = cv2.cvtColor(photo, cv2.COLOR_RGB2GRAY)
             photo = photo[None,...,None].astype(np.float32) / 255.0 # normalize 0-1
             assert photo.ndim == 4 # [1,H,W,1]
 
-            feed_dict = {self.photo_ph: photo,}     # placeholder photo + actual photo
+            feed_dict = {self.photo_ph: photo,}
             #if self.lfnet_config.full_output:
             fetch_dict = {
                 'kpts': self.ops['kpts'],
