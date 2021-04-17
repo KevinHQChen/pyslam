@@ -314,7 +314,7 @@ class RfNetFeature2D:
             print("image: ", img_id)
             kp, des = pickle.load( open( "dest/"+str(img_id)+".txt", "rb" ) )
             mkp = kp.cpu().numpy()
-            self.kp = list(map(to_cv2_kp, mkp))
+            self.kps = list(map(to_cv2_kp, mkp))
             self.des = des.cpu().detach().numpy()
 
             return self.kps, self.des 
