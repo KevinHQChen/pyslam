@@ -180,12 +180,16 @@ if __name__ == "__main__":
     plt.plot(z_error, label = 'z')
     plt.legend()
     plt.xlabel("Image ID")
-    plt.ylabel("Absolute Translational Error")
+    plt.ylabel("Translational Error %")
     plt.savefig("transl_error.png")
 
-    plt.plot(transl_error)
-    plt.savefig("trans_error.png")
+#    plt.plot(transl_error)
+#    plt.savefig("trans_error.png")
+    with open('poses.txt', 'w') as outfile:
+        for slice_2d in vo.poses:
+            np.savetxt(outfile, slice_2d)
 
+#    np.savetxt("poses.csv", vo.poses, delimiter=",")
 
     if is_draw_traj_img:
         print('saving map.png')
