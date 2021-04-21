@@ -39,6 +39,7 @@ from feature_matcher import feature_matcher_factory, FeatureMatcherTypes
 
 from feature_tracker_configs import FeatureTrackerConfigs
 
+from matplotlib import pyplot as plt
 
 
 """
@@ -66,7 +67,7 @@ if __name__ == "__main__":
                         config.DistCoef, config.cam_settings['Camera.fps'])
 
 
-    num_features=2000  # how many features do you want to detect and track?
+    num_features=512    # how many features do you want to detect and track?
 
     # select your tracker configuration (see the file feature_tracker_configs.py) 
     # LK_SHI_TOMASI, LK_FAST
@@ -96,6 +97,14 @@ if __name__ == "__main__":
 
     is_draw_matched_points = True 
     matched_points_plt = Mplot2d(xlabel='img id', ylabel='# matches',title='# matches')
+
+    transl_error = []
+    x_error = []
+    y_error = []
+    z_error = []
+    est_traj = []
+    true_traj = []
+
 
     img_id = 0
     while dataset.isOk():
@@ -147,6 +156,13 @@ if __name__ == "__main__":
                     matched_points_plt.draw(inliers_signal,'# inliers',color='g')                    
                     matched_points_plt.refresh()                    
 
+                transl_error.append([errx[1], erry[1], errz[1]])
+                x_error.append(errx[1]/math.fabs(x_true))
+                y_error.append(erry[1]/math.fabs(y_true))
+                z_error.append(errz[1]/math.fabs(z_true))
+                est_traj.append([x,y,z])
+                true_traj.append([x_true,y_true,z_true])
+
 
             # draw camera image 
             cv2.imshow('Camera', vo.draw_img)				
@@ -156,8 +172,24 @@ if __name__ == "__main__":
             break
         img_id += 1
 
-    #print('press a key in order to exit...')
-    #cv2.waitKey(0)
+    print('press a key in order to exit...')
+    cv2.waitKey(0)
+
+    plt.plot(x_error, label = 'x')
+    plt.plot(y_error, label = 'y')
+    plt.plot(z_error, label = 'z')
+    plt.legend()
+    plt.xlabel("Image ID")
+    plt.ylabel("Translational Error %")
+    plt.savefig("transl_error.png")
+
+#    plt.plot(transl_error)
+#    plt.savefig("trans_error.png")
+    with open('poses.txt', 'w') as outfile:
+        for slice_2d in vo.poses:
+            np.savetxt(outfile, slice_2d)
+
+#    np.savetxt("poses.csv", vo.poses, delimiter=",")
 
     if is_draw_traj_img:
         print('saving map.png')
